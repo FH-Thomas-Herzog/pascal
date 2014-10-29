@@ -1,0 +1,1 @@
+PROGRAM _; BEGIN END.

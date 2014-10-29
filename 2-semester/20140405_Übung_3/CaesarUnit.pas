@@ -1,0 +1,126 @@
+Unit CaesarUnit;
+
+Interface
+
+Type
+	ErrorCode = (OK, INVALID_KEY);
+	
+{
+	Encrypts the given input file contained text and saves it in the output file.
+	@param
+		inFile: the input text file with the unencrypted text
+	@param	
+		outFile: the output file where the encrypted text will be saved.
+	@param	
+		key: the key for the caesar algorithm.
+	@return
+		the result of the procedure 
+		OK: No error occurred
+		INVALID_KEY: the key is an invalid one
+}
+Function Encrypt(VAR inFile, outFile: Text; key: Integer): ErrorCode;
+{
+	Decrypts the given input file contained text and saves it in the output file.
+	@param
+		inFile: the input text file with the encrypted text
+	@param	
+		outFile: the output file where the decrypted text will be saved.
+	@param	
+		key: the key for the caesar algorithm.
+	@return
+		the result of the procedure 
+		OK: No error occurred
+		INVALID_KEY: the key is an invalid one
+}
+Function Decrypt(VAR inFile, outFile: Text; key: Integer): ErrorCode;
+
+// ################################ Just for testing ################################
+Function encryptText(value: String; key:Integer): String;
+Function decryptText(value: String; key:Integer): String;
+
+Implementation
+
+Const
+	bufferSize = 1024;
+	
+Function encryptText(value: String; key:Integer): String;
+VAR	
+	encrypted: String;
+	i, ordinal, sLength: Integer;
+Begin
+	encrypted := '';
+	if  (key > Ord(Low(Char))) and (key < Ord(High(Char))) then begin
+		sLength := Length(value);
+		for i := 1 to sLength do begin
+			ordinal := (Ord(value[i]) + key);
+			if (ordinal > Ord(High(Char))) then begin
+				ordinal := ordinal - Ord(High(Char));
+			end;
+			encrypted := encrypted + Char(ordinal);
+		end;
+	end;	
+	encryptText := encrypted;
+End;
+
+Function decryptText(value: String; key:Integer): String;
+VAR	
+	encrypted: String;
+	i, ordinal, sLength: Integer;
+Begin
+	encrypted := '';
+	if  (key > Ord(Low(Char))) and (key < Ord(High(Char))) then begin
+		sLength := Length(value);
+		for i := 1 to sLength do begin
+			ordinal := (Ord(value[i]) - key);
+			if (ordinal < Ord(Low(Char))) then begin
+				ordinal := ordinal + Ord(Low(Char));
+			end;
+			encrypted := encrypted + Char(ordinal);
+		end;
+	end;
+	decryptText := encrypted;
+End;
+
+Function Encrypt(VAR inFile, outFile: Text; key: Integer): ErrorCode;
+Var
+	line: String;
+Begin
+	Encrypt := OK;
+	if  (key > Ord(Low(Char))) and (key < Ord(High(Char))) then begin
+		Reset(inFile);
+		ReWrite(outFile);
+		repeat begin
+			ReadLn(inFile, line);	
+		writeln(line);	
+			WriteLn(outFile, EncryptText(line, key));
+		end
+		until EOF(inFile);
+		Close(outFile);
+	end
+	else begin
+		Encrypt := INVALID_KEY;
+	end;
+End;
+
+Function Decrypt(VAR inFile, outFile: Text; key: Integer): ErrorCode;
+Var
+	line: String;
+Begin
+	Decrypt := OK;
+	if  (key > Ord(Low(Char))) and (key < Ord(High(Char))) then begin		
+		Reset(inFile);
+		ReWrite(outFile);
+		repeat begin
+			ReadLn(inFile, line);
+			WriteLn(outFile, DecryptText(line, key));
+		end
+		until EOF(inFile);
+		Close(outFile);
+	end
+	else begin
+		Decrypt := INVALID_KEY;
+	end;
+End;
+
+Begin
+End.

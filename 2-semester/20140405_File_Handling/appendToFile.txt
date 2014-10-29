@@ -1,0 +1,2 @@
+I am added to newly created file
+Appended to the file after file was closed
